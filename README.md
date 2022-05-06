@@ -1,2 +1,2 @@
-# AE4320_PilotID
-Run 'main.m'
+# AE4320 - Pilot Identification
+Run ```main.m```
