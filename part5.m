@@ -20,6 +20,7 @@ uv = validation.u;
 ev_dft  = fft(ev,N);
 uv_dft  = fft(uv,N);
 
+% Hp=U(jw)/E(jw) but now based on validation dataset
 Hpv = u_dft(ft_pkslocs)./e_dft(ft_pkslocs);
 magHpv = abs(Hpv); phaHpv = rad2deg(unwrap(angle(Hpv)));
 
@@ -42,6 +43,7 @@ legend('Real H_{p}(j\omega)','Estimated H_{p}(j\omega)');
 omega = ft_pkslocs*f0;
 Hpv = magHpv;
 
+% create cost functions over all peak frequencies
 for k=1:10
     J_Av = @(x) sum(abs(Hpv(k)-x(1)*exp(-1i*omega(k)*x(2))*(x(3)^2)/((1i*omega(k)^2)+2*x(3)*x(4)*1i*omega(k)+x(3)^2))^2);
     J_Bv = @(x) sum(abs(Hpv(k)-x(1)*(x(2)*1i*omega(k)+1)*exp(-1i*omega(k)*x(3))*(x(4)^2)/((1i*omega(k)^2)+2*x(4)*x(5)*1i*omega(k)+x(4)^2))^2);
@@ -49,6 +51,7 @@ for k=1:10
     J_Dv = @(x) sum(abs(Hpv(k)-x(1)/(x(2)*1i*omega(k)+1)*exp(-1i*omega(k)*x(3))*(x(4)^2)/((1i*omega(k)^2)+2*x(4)*x(5)*1i*omega(k)+x(4)^2))^2);
 end
 
+% calculate cost for all cost functions based on the opt. parameter set
 Cost_Av = J_Av(A_opt);
 Cost_Bv = J_Bv(B_opt);
 Cost_Cv = J_Cv(C_opt);

@@ -19,6 +19,7 @@ Hpe = magHp;
 
 %% Model A
 
+% define inco
 % x = [Kp, tau, Wnm, Znm];
 x_a = zeros(5,4);
 x_a(1,:) = [0, 1, 1, 1];
@@ -30,18 +31,26 @@ x_a(5,:) = [1, 1, 1, 1];
 Pars_A = zeros(5,4);
 Cost_A = zeros(5,1);
 
+% create cost function over all peak frequencies 
 for k=1:10
     J_A = @(x) sum(abs(Hpe(k)-x(1)*exp(-1i*omega(k)*x(2))*(x(3)^2)/((1i*omega(k)^2)+2*x(3)*x(4)*1i*omega(k)+x(3)^2))^2);
 end
 
+%J_A = @(x) abs(Hpe(1)-x(1)*exp(-1i*omega(1)*x(2))*(x(3)^2)/((1i*omega(1)^2)+2*x(3)*x(4)*1i*omega(1)+x(3)^2))^2 +...
+%    abs(Hpe(2)-x(1)*exp(-1i*omega(2)*x(2))*(x(3)^2)/((1i*omega(2)^2)+2*x(3)*x(4)*1i*omega(2)+x(3)^2))^2 +...
+%    abs(Hpe(3)-x(1)*exp(-1i*omega(3)*x(2))*(x(3)^2)/((1i*omega(3)^2)+2*x(3)*x(4)*1i*omega(3)+x(3)^2))^2
+
+% optimize cost function for all 5 incos
 for j=1:5
     Pars_A(j,:) = fminsearch(J_A,x_a(j,:));
     Cost_A(j,1) = J_A(Pars_A(j,:));
 end
 
+% find opt. parameter set based on minimum cost from 5 incos
 idxA = find(Cost_A==min(Cost_A));
 A_opt = Pars_A(idxA,:);
 
+% define tf of model using opt. parameter set
 sys_A = A_opt(1)*exp(-s*A_opt(2))*(A_opt(3)^2)/(s^2+2*A_opt(3)*A_opt(4)*s+A_opt(3)^2);
 [magA, phaA, wA] = bode(sys_A);
 

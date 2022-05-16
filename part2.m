@@ -19,6 +19,7 @@ u = identification.u;
 ft_dft = fft(ft,N);
 fd_dft = fft(fd,N);
 
+% find peaks of ft and fd
 [ft_pks, ft_pkslocs] = findpeaks(abs(ft_dft(1:N/2)),'MinPeakHeight',1e-1);
 [fd_pks, fd_pkslocs] = findpeaks(abs(fd_dft(1:N/2)),'MinPeakHeight',1e-1);
 
@@ -37,29 +38,11 @@ xlabel('\omega (rad/s)'); ylabel('|dft(fd) (abs)|');
 e_dft  = fft(e,N);
 u_dft  = fft(u,N);
 
-% figure(2) % dft(e) and dft(u)
-% loglog(omega, abs(e_dft(1:N/2)),'b'); hold on
-% loglog(omega(fd_pkslocs), abs(e_dft(fd_pkslocs)),'ob');
-% loglog(omega(ft_pkslocs), abs(e_dft(ft_pkslocs)),'ob');
-% 
-% loglog(omega, abs(u_dft(1:N/2)),'g'); 
-% loglog(omega(fd_pkslocs), abs(u_dft(fd_pkslocs)),'og');
-% loglog(omega(ft_pkslocs), abs(u_dft(ft_pkslocs)),'og');
-% 
-% Seft = (e_dft(1:N)).*(ft_dft(1:N))/N;
-% Suft = (u_dft(1:N)).*(ft_dft(1:N))/N;
-% 
-% figure(3) % Seft and Suft
-% loglog(omega, abs(Seft(1:N/2)),'b'); hold on
-% loglog(omega(ft_pkslocs), abs(Seft(ft_pkslocs)),'ob');
-% 
-% loglog(omega, abs(Suft(1:N/2)),'g'); hold on
-% loglog(omega(ft_pkslocs), abs(Suft(ft_pkslocs)),'og');
-
+% Hp = U(jw)/E(jw)
 Hp = u_dft(ft_pkslocs)./e_dft(ft_pkslocs);
 magHp = abs(Hp); phaHp = rad2deg(unwrap(angle(Hp)));
 
-figure(5) % Hp = U/E
+figure(2)
 sgtitle('Estimation of Hp(j\omega)')
 subplot(2,1,1); loglog(ft_pkslocs*f0, magHp,'ob');
 xlim([5e-2 5e0]); ylim([1e0 1e2]); grid on;

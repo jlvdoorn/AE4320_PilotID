@@ -19,6 +19,8 @@ Hpe = magHp;
 
 %% Model D
 
+% do the exact same as in part3.m but now for the extended model
+
 % x = [Kp, Ti, tau, Wnm, Znm]
 x_d = zeros(5,5);
 x_d(1,:) = [0, 1, 1, 1, 1];
